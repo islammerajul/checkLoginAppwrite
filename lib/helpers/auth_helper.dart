@@ -31,28 +31,49 @@ class AuthHelper {
     print("log");
 
     try {
-      Client myclient = Client();
+      // Client myclient = Client();
 
-      myclient
-              .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
-              .setProject('641bed0c00e0c9af1b66') // Your project ID
-              .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
-          ;
+      // myclient
+      //         .setEndpoint('http://localhost/v1') // Your Appwrite Endpoint
+      //         .setProject('641bed0c00e0c9af1b66') // Your project ID
+      //         .setSelfSigned() // Use only on dev mode with a self-signed SSL cert
+      //     ;
 
-      Account myAccount = Account(myclient);
+      // Account myAccount = Account(myclient);
 
-      final user = await myAccount.create(
-          userId: ID.unique(),
-          email: 'me@appwrite.io',
-          password: 'password',
-          name: 'My Name');
+      // final user = await myAccount.create(
+      //     userId: ID.unique(),
+      //     email: 'me@appwrite.io',
+      //     password: 'password',
+      //     name: 'My Name');
 
-      //final models.Session response =await account.createEmailSession(email: email, password: password);
+      final models.Session response =
+          await account.createEmailSession(email: email, password: password);
 
-      // prefs.setString('session', response.clientCode);
-      // prefs.setString('email', email);
-      // prefs.setString('password', password);
-      // setLoggedIn(true);
+      prefs.setString('session', response.clientCode);
+      prefs.setString('email', email);
+      prefs.setString('password', password);
+      setLoggedIn(true);
+    } catch (e) {
+      print("exception");
+      print(e.toString());
+    }
+    return true;
+  }
+
+  Future<bool> signUpEmailPassword(String email, String password) async {
+    final SharedPreferences prefs = await _prefs;
+    try {
+      final user = await account.create(
+          userId: ID.unique(), email: email, password: password);
+
+      final models.Session response =
+          await account.createEmailSession(email: email, password: password);
+
+      prefs.setString('session', response.clientCode);
+      prefs.setString('email', email);
+      prefs.setString('password', password);
+      setLoggedIn(true);
     } catch (e) {
       print("exception");
       print(e.toString());
